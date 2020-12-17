@@ -17,6 +17,7 @@ minecraft {
 
 repositories {
     maven { url = "http://maven.fabricmc.net/" }
+    maven { url = "https://dl.bintray.com/bymartrixx/maven" }
 }
 
 dependencies {
@@ -32,6 +33,15 @@ dependencies {
 
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
+
+    // Using the version from the gradle.properties
+    modImplementation "io.github.bymartrixx.playerevents:player-events-api:${project.player_events_api_version}"
+
+    // Directly setting the version
+    modImplementation "io.github.bymartrixx.playerevents:player-events-api:2.0.0"
+
+    modImplementation "me.shedaniel.cloth:config-2:4.8.3"
+    modImplementation "me.sargunvohra.mcmods:autoconfig1u:3.3.1"
 }
 
 processResources {
