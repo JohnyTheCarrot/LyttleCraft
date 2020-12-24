@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "lyttlecraft",
-  "version": "${version}",
+  "version": "1.0.0",
 
   "name": "LyttleCraft",
   "description": "Stualyttle's mod",
@@ -28,12 +28,16 @@
   "mixins": [
     "lyttlecraft.mixins.json"
   ],
+  "custom": {
+    "modmenu:clientsideOnly": true
+  },
   "depends": {
     "fabricloader": ">=0.8.7",
     "fabric": "*",
     "fabric-language-kotlin": "*",
-    "minecraft": "1.16.x",
-    "player_events_api": ">=2.0.0"
+    "cloth-api": "*",
+    "modmenu": "*",
+    "minecraft": "1.16.x"
   },
   "suggests": {
     "flamingo": "*"

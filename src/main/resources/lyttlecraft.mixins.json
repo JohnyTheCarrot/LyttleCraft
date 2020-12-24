@@ -3,9 +3,10 @@
   "package": "com.johnythecarrot.lyttlecraft.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "MultiplayerMixin"
+    "OnMessageMixin"
   ],
   "client": [
+    "MultiplayerMixin",
     "PlayerMixin"
   ],
   "injectors": {

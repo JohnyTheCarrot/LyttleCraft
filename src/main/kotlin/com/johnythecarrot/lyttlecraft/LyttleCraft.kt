@@ -1,14 +1,12 @@
 package com.johnythecarrot.lyttlecraft
 
-import io.github.bymartrixx.playerevents.api.event.PlayerJoinCallback
+import com.johnythecarrot.lyttlecraft.ConfigScreenUtils.Companion.init
+import com.johnythecarrot.lyttlecraft.ConfigScreenUtils.Companion.loadConfig
 import net.fabricmc.api.ModInitializer
 import net.fabricmc.fabric.api.event.player.UseBlockCallback
-import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.ItemStack
 import net.minecraft.item.Items
-import net.minecraft.server.MinecraftServer
-import net.minecraft.server.network.ServerPlayerEntity
 import net.minecraft.text.Text
 import net.minecraft.util.ActionResult
 import net.minecraft.util.Hand
@@ -28,10 +26,12 @@ class LyttleCraft : ModInitializer {
         // Proceed with mild caution.
 
         println("Loading LyttleCraft")
+        init()
+        loadConfig()
         val useBlockCallback = UseBlockCallback callback@{ player: PlayerEntity, _: World, hand: Hand, hitResult: BlockHitResult ->
             val heldItem: ItemStack = player.getStackInHand(hand)
 
-            if (heldItem.item !== Items.STICK || heldItem.name.string.toLowerCase() != "measuring stick")
+            if (heldItem.item !== Items.STICK || heldItem.name.string.toLowerCase() != ConfigScreenUtils.map["measuring_stick_name"])
                 return@callback ActionResult.PASS
 
             val position: Int

@@ -1,7 +1,10 @@
+import net.fabricmc.loom.task.RemapJarTask
+
 plugins {
     id 'fabric-loom'
     id 'maven-publish'
     id "org.jetbrains.kotlin.jvm"
+    id 'com.github.johnrengelman.shadow' version '4.0.2'
 }
 
 sourceCompatibility = JavaVersion.VERSION_1_8
@@ -13,7 +16,6 @@ group = project.maven_group
 
 minecraft {
 }
-
 
 repositories {
     maven { url = "http://maven.fabricmc.net/" }
@@ -34,14 +36,25 @@ dependencies {
     // PSA: Some older mods, compiled on Loom 0.2.1, might have outdated Maven POMs.
     // You may need to force-disable transitiveness on them.
 
-    // Using the version from the gradle.properties
-    modImplementation "io.github.bymartrixx.playerevents:player-events-api:${project.player_events_api_version}"
+    modImplementation "io.github.prospector:modmenu:1.14.5+build.30"
 
-    // Directly setting the version
-    modImplementation "io.github.bymartrixx.playerevents:player-events-api:2.0.0"
+    def cloth = "me.shedaniel.cloth:config-2:4.8.3"
+    modImplementation cloth
+    include cloth
 
-    modImplementation "me.shedaniel.cloth:config-2:4.8.3"
     modImplementation "me.sargunvohra.mcmods:autoconfig1u:3.3.1"
+
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
+    //compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
+    // https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml
+    //compile group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.1.2'
+    def jacksonDatabind = 'com.fasterxml.jackson.core:jackson-databind:2.0.1'
+    compile jacksonDatabind
+    shadow jacksonDatabind
+
+    def jacksonDataFormat = 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.1.2'
+    compile jacksonDataFormat
+    shadow jacksonDataFormat
 }
 
 processResources {
@@ -70,6 +83,38 @@ tasks.withType(JavaCompile) {
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = "sources"
     from sourceSets.main.allSource
+}
+
+tasks.jar.enabled = false
+tasks.remapJar.enabled = false
+
+
+shadowJar {
+    destinationDir = file("${buildDir}/tmp/allJar")
+    configurations = [project.configurations.shadow]
+    relocate 'com.pivovarit.function', 'io.github.daomephsta.inscribe.shadow.com.pivovarit.function'
+    relocate 'io.github.daomephsta.mosaic', 'io.github.daomephsta.inscribe.shadow.mosaic'
+    relocate 'org.commonmark', 'io.github.daomephsta.inscribe.shadow.org.commonmark'
+
+    //Exclude META-INF entries of shaded deps
+    exclude 'META-INF/**'
+    exclude '**/*.pdn'
+    from('.') {
+        include 'LICENSE.md'
+        include 'NOTICE.txt'
+        include 'licenses/**'
+    }
+    minimize()
+}
+
+task remapShadowJar(type: RemapJarTask) {
+    dependsOn shadowJar
+    input = shadowJar.archivePath
+    addNestedDependencies = true
+}
+
+build {
+    dependsOn remapShadowJar
 }
 
 jar {

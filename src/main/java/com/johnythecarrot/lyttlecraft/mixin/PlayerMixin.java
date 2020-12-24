@@ -1,5 +1,6 @@
 package com.johnythecarrot.lyttlecraft.mixin;
 
+import com.johnythecarrot.lyttlecraft.ConfigScreenUtils;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -33,7 +34,7 @@ public abstract class PlayerMixin extends LivingEntity {
     {
         ItemStack handItem = getMainHandStack();
 
-        if (handItem.getName().asString().toLowerCase().contains("important")) {
+        if (handItem.getName().asString().toLowerCase().contains((CharSequence) ConfigScreenUtils.Companion.getMap().get("important_token"))) {
             boolean willBreak = handItem.getDamage() + 1 == handItem.getMaxDamage();
             if (willBreak) {
                 if (lastPos != pos)
